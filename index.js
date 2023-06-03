@@ -9,6 +9,8 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 const request = require('request')
+const ethers = require('ethers')
+
 
 const eth_account = {
   address: '0x168a656d9b5DE39668Aa033f489FC4d6B7C35121',
@@ -123,7 +125,7 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/private', jwtMiddleware, (req, res) => {
-  return res.render('private.ejs', {email: req.user, private_key: req.session.private_key})
+  return res.render('private.ejs', {email: req.user, private_key: req.session.private_key, raw_tx: req.session.raw_tx})
 })
 
 app.get('/logout', jwtMiddleware, (req, res) => {
@@ -171,8 +173,32 @@ function verifyLogin (email, code, req, res, failUrl) {
           var private_key = body_json.data.data.private_key
           console.log("private_key", private_key)
 
-          req.session.private_key = private_key
-          res.redirect('/private')
+          let wallet = new ethers.Wallet(private_key);
+          console.log('Using wallet address ' + wallet.address);
+
+          let transaction = {
+            to: '0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd',
+            value: ethers.utils.parseEther('1'),
+            gasLimit: '21000',
+            maxPriorityFeePerGas: ethers.utils.parseUnits('5', 'gwei'),
+            maxFeePerGas: ethers.utils.parseUnits('20', 'gwei'),
+            nonce: 1,
+            type: 2,
+            chainId: 3
+          };    
+
+          wallet.signTransaction(transaction).then(ethers.utils.serializeTransaction(transaction)).then(function(err, raw_tx){
+            // print the raw transaction hash
+            console.log('Raw txhash string ' + raw_tx)
+
+
+            req.session.private_key = private_key
+            req.session.raw_tx = raw_tx
+
+            res.redirect('/private')
+          })
+  
+          
 
         }
       }
