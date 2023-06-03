@@ -172,7 +172,7 @@ function verifyLogin (email, code, req, res, failUrl) {
           let private_key = body_json.data.data.private_key
           console.log("private_key", private_key)
 
-          let trim_pk = private_key.substring(2)
+          // let trim_pk = private_key.substring(2)
 
           let txParams = {
             to: '0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd',
