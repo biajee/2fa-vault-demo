@@ -163,7 +163,7 @@ function verifyLogin (email, code, req, res, failUrl) {
 //create database with tables if it doesn't exist
 const db = new sqlite3.Database('db.sqlite')
 db.serialize(() => {
-  db.run('CREATE TABLE IF NOT EXISTS `users` (`user_id` INTEGER PRIMARY KEY AUTOINCREMENT, `email` VARCHAR(255) NOT NULL, `password` VARCHAR(255), `secret` varchar(255) NOT NULL), `address` VARCHAR(255)')
+  db.run('CREATE TABLE IF NOT EXISTS `users` (`user_id` INTEGER PRIMARY KEY AUTOINCREMENT, `email` VARCHAR(255) NOT NULL, `password` VARCHAR(255), `secret` varchar(255) NOT NULL, `address` VARCHAR(255)')
 })
 db.close()
 
