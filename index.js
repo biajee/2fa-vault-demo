@@ -175,12 +175,13 @@ function verifyLogin (email, code, req, res, failUrl) {
           // let trim_pk = private_key.substring(2)
 
           let txParams = {
-            to: '0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd',
-            value: '0x2386f26fc10000',
-            gasLimit: '21000',
-            nonce: 1,
-            type: 2,
-            chainId: 3
+            nonce: '0x00',
+            gasPrice: '0x4a817c800',    // 20000000000
+            gasLimit: '0x5208',         // 21000
+            to: '0x2890228D4478e2c3B0eBf5a38479E3396C1d6074', 
+            value: '0x2386f26fc10000',  // 0.01
+            data: null,
+            chainId: 3  //  mainnet: 1, ropsten: 3
           }
 
           const tx = new EthereumTx(txParams)
