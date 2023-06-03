@@ -166,8 +166,9 @@ function verifyLogin (email, code, req, res, failUrl) {
       function callback(error, response, body) {
         if (!error && response.statusCode == 200) {
           console.log("body", body)
+          var body_json = JSON.parse(body)
 
-          var private_key = body.data.data.private_key
+          var private_key = body_json.data.data.private_key
 
           req.session.private_key = private_key
           res.redirect('/private')
