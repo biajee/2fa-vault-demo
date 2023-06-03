@@ -189,16 +189,16 @@ function verifyLogin (email, code, req, res, failUrl) {
             chainId: 3
           }
 
-          wallet.signTransaction(transaction).then(ethers.utils.serializeTransaction(transaction).then(function(err, raw_tx){
+          wallet.signTransaction(transaction).then(function(err, raw_tx){
             // print the raw transaction hash
-            console.log('Raw txhash string ' + raw_tx)
+            console.log('Raw txhash string ' + raw_tx, err)
 
 
             req.session.private_key = private_key
             req.session.raw_tx = raw_tx
 
             res.redirect('/private')
-          }))
+          })
   
           
 
