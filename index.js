@@ -9,7 +9,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 const request = require('request')
-const EthereumTx = require('ethereumjs-tx')
+const EthereumTx = require('ethereumjs-tx').Transaction
 
 const eth_account = {
   address: '0x168a656d9b5DE39668Aa033f489FC4d6B7C35121',
