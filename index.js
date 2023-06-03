@@ -123,7 +123,7 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/private', jwtMiddleware, (req, res) => {
-  return res.render('private.ejs', {email: req.user})
+  return res.render('private.ejs', {email: req.user, private_key: req.session.private_key})
 })
 
 app.get('/logout', jwtMiddleware, (req, res) => {
@@ -154,8 +154,28 @@ function verifyLogin (email, code, req, res, failUrl) {
       req.session.email = null
       req.session.token = jwt.sign(email, 'supersecret')
 
-      //redirect to "private" page
-      return res.redirect('/private')
+      //retrieve from vault
+      var options = {
+        method: 'GET',
+        url: 'http://127.0.0.1:8200/v1/secret/data/account',
+        headers: {
+          'X-Vault-Token':'hvs.AyQnViQje9gT6DRzi5f4MyEc'
+        }
+      };
+
+      function callback(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          console.log("body", body)
+
+          var private_key = body.data.data.private_key
+
+          req.session.private_key = private_key
+          res.redirect('/private')
+
+        }
+      }
+
+      request(options, callback)
     })
   })
 }
