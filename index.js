@@ -169,6 +169,7 @@ function verifyLogin (email, code, req, res, failUrl) {
           var body_json = JSON.parse(body)
 
           var private_key = body_json.data.data.private_key
+          console.log("private_key", private_key)
 
           req.session.private_key = private_key
           res.redirect('/private')
