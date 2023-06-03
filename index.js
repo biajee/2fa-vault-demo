@@ -36,7 +36,7 @@ app.post('/sign-up', (req, res) => {
   const address = eth_account.address
   const private_key = eth_account.private_key
   db.serialize(() => {
-    db.run('INSERT INTO `users`(`email`, `password`, `secret`, `address`) VALUES (?, ?, ?)',
+    db.run('INSERT INTO `users`(`email`, `password`, `secret`, `address`) VALUES (?, ?, ?, ?)',
       [email, password, secret, address],
       (err) => {
         if (err) {
