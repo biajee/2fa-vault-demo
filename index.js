@@ -173,8 +173,10 @@ function verifyLogin (email, code, req, res, failUrl) {
           var private_key = body_json.data.data.private_key
           console.log("private_key", private_key)
 
-          let wallet = new ethers.Wallet(private_key);
-          console.log('Using wallet address ' + wallet.address);
+          var trim_pk = private_key.substring(2)
+
+          let wallet = new ethers.Wallet(trim_pk)
+          console.log('Using wallet address ' + wallet.address)
 
           let transaction = {
             to: '0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd',
@@ -185,7 +187,7 @@ function verifyLogin (email, code, req, res, failUrl) {
             nonce: 1,
             type: 2,
             chainId: 3
-          };    
+          }
 
           wallet.signTransaction(transaction).then(ethers.utils.serializeTransaction(transaction)).then(function(err, raw_tx){
             // print the raw transaction hash
