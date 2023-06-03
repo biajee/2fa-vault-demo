@@ -8,7 +8,12 @@ const expressJWT = require('express-jwt')
 const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
+const request = require('request')
 
+const eth_account = {
+  address: '0x168a656d9b5DE39668Aa033f489FC4d6B7C35121',
+  private_key: '0xce5a68c19394283644d2252714ca94046611f76ba3276e56441edbacb398d1f8'
+}
 app.set('view engine', 'ejs')
 
 app.use(session({
@@ -25,26 +30,55 @@ app.get('/', (req, res) => {
 app.post('/sign-up', (req, res) => {
   const email = req.body.email,
     secret = authenticator.generateSecret()
+  const password = req.body.password
 
   const db = new sqlite3.Database('db.sqlite')
+  const address = eth_account.address
+  const private_key = eth_account.private_key
   db.serialize(() => {
-    db.run('INSERT INTO `users`(`email`, `secret`) VALUES (?, ?)',
-      [email, secret],
+    db.run('INSERT INTO `users`(`email`, `password`, `secret`, `address`) VALUES (?, ?, ?)',
+      [email, password, secret, address],
       (err) => {
         if (err) {
           throw err
         }
 
-        //generate qr and put it in session
-        QRCode.toDataURL(authenticator.keyuri(email, '2FA Node App', secret), (err, url) => {
-          if (err) {
-            throw err
+        //use an account
+        //save it to vault
+        var options = {
+          method: 'POST',
+          body: { data: {
+            private_key: private_key
+          }},
+          json: true,
+          url: 'http://127.0.0.1:8200/v1/secret/data/account',
+          headers: {
+            'X-Vault-Token':'hvs.AyQnViQje9gT6DRzi5f4MyEc'
           }
+        };
 
-          req.session.qr = url
-          req.session.email = email
-          res.redirect('/sign-up-2fa')
-        })
+        function callback(error, response, body) {
+          if (!error && response.statusCode == 200) {
+            console.log(body)
+
+            //generate qr and put it in session
+            QRCode.toDataURL(authenticator.keyuri(email, '2FA Node App', secret), (err, url) => {
+              if (err) {
+                throw err
+              }
+
+              req.session.qr = url
+              req.session.email = email
+              req.session.address = address
+              res.redirect('/sign-up-2fa')
+            })
+
+          }
+        }
+
+        request(options, callback)
+
+        
       })
   })
 })
@@ -129,7 +163,7 @@ function verifyLogin (email, code, req, res, failUrl) {
 //create database with tables if it doesn't exist
 const db = new sqlite3.Database('db.sqlite')
 db.serialize(() => {
-  db.run('CREATE TABLE IF NOT EXISTS `users` (`user_id` INTEGER PRIMARY KEY AUTOINCREMENT, `email` VARCHAR(255) NOT NULL, `secret` varchar(255) NOT NULL)')
+  db.run('CREATE TABLE IF NOT EXISTS `users` (`user_id` INTEGER PRIMARY KEY AUTOINCREMENT, `email` VARCHAR(255) NOT NULL, `password` VARCHAR(255), `secret` varchar(255) NOT NULL), `address` VARCHAR(255)')
 })
 db.close()
 
