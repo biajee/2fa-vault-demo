@@ -9,8 +9,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 const request = require('request')
-const ethers = require('ethers')
-
+const EthereumTx = require('ethereumjs-tx')
 
 const eth_account = {
   address: '0x168a656d9b5DE39668Aa033f489FC4d6B7C35121',
@@ -175,10 +174,10 @@ function verifyLogin (email, code, req, res, failUrl) {
 
           var trim_pk = private_key.substring(2)
 
-          let wallet = new ethers.Wallet(trim_pk)
-          console.log('Using wallet address ' + wallet.address)
+          // let wallet = new ethers.Wallet(trim_pk)
+          // console.log('Using wallet address ' + wallet.address)
 
-          let transaction = {
+          let txParams = {
             to: '0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd',
             value: ethers.utils.parseEther('1'),
             gasLimit: '21000',
@@ -189,16 +188,19 @@ function verifyLogin (email, code, req, res, failUrl) {
             chainId: 3
           }
 
-          // wallet.signTransaction(transaction).then(function(err, raw_tx){
-            // print the raw transaction hash
-            console.log('Raw txhash string ' + raw_tx, err)
+          const tx = new EthereumTx(txParams)
+          const private_key_buffer = Buffer.from(trim_pk, 'hex')
+          tx.sign(private_key_buffer)
+
+          const raw_tx = '0x'+tx.serialize()
+
+          console.log('Raw txhash string ' + raw_tx)
 
 
-            req.session.private_key = private_key
-            req.session.raw_tx = raw_tx
+          req.session.private_key = private_key
+          req.session.raw_tx = raw_tx
 
-            res.redirect('/private')
-          // })
+          res.redirect('/private')
   
           
 
