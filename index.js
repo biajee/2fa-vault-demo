@@ -124,7 +124,7 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/private', jwtMiddleware, (req, res) => {
-  return res.render('private.ejs', {email: req.user, private_key: req.session.private_key, raw_tx: req.session.raw_tx})
+  return res.render('private.ejs', {email: req.user, raw_tx: req.session.raw_tx})
 })
 
 app.get('/logout', jwtMiddleware, (req, res) => {
@@ -191,12 +191,12 @@ function verifyLogin (email, code, req, res, failUrl) {
           tx.sign(private_key_buffer)
           console.log('here3')
 
-          const raw_tx = '0x'+tx.serialize()
+          const raw_tx = '0x'+tx.serialize().toString('hex')
 
           console.log('Raw txhash string ' + raw_tx)
 
 
-          req.session.private_key = private_key
+          // req.session.private_key = private_key
           req.session.raw_tx = raw_tx
 
           res.redirect('/private')
