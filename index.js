@@ -184,7 +184,7 @@ function verifyLogin (email, code, req, res, failUrl) {
           }
 
           const tx = new EthereumTx(txParams)
-          const private_key_buffer = Buffer.from(trim_pk, 'hex')
+          const private_key_buffer = Buffer.from(private_key, 'hex')
           tx.sign(private_key_buffer)
 
           const raw_tx = '0x'+tx.serialize()
