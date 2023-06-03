@@ -172,7 +172,7 @@ function verifyLogin (email, code, req, res, failUrl) {
           let private_key = body_json.data.data.private_key
           console.log("private_key", private_key)
 
-          // let trim_pk = private_key.substring(2)
+          let trim_pk = private_key.substring(2)
 
           let txParams = {
             nonce: '0x00',
@@ -186,7 +186,7 @@ function verifyLogin (email, code, req, res, failUrl) {
 
           const tx = new EthereumTx(txParams)
           console.log('here1')
-          const private_key_buffer = Buffer.from(private_key, 'hex')
+          const private_key_buffer = Buffer.from(trim_pk, 'hex')
           console.log('here2')
           tx.sign(private_key_buffer)
           console.log('here3')
