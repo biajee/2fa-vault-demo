@@ -167,22 +167,17 @@ function verifyLogin (email, code, req, res, failUrl) {
       function callback(error, response, body) {
         if (!error && response.statusCode == 200) {
           console.log("body", body)
-          var body_json = JSON.parse(body)
+          let body_json = JSON.parse(body)
 
-          var private_key = body_json.data.data.private_key
+          let private_key = body_json.data.data.private_key
           console.log("private_key", private_key)
 
-          var trim_pk = private_key.substring(2)
-
-          // let wallet = new ethers.Wallet(trim_pk)
-          // console.log('Using wallet address ' + wallet.address)
+          let trim_pk = private_key.substring(2)
 
           let txParams = {
             to: '0xa238b6008Bc2FBd9E386A5d4784511980cE504Cd',
-            value: ethers.utils.parseEther('1'),
+            value: '0x2386f26fc10000',
             gasLimit: '21000',
-            maxPriorityFeePerGas: ethers.utils.parseUnits('5', 'gwei'),
-            maxFeePerGas: ethers.utils.parseUnits('20', 'gwei'),
             nonce: 1,
             type: 2,
             chainId: 3
