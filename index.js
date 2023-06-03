@@ -88,7 +88,7 @@ app.get('/sign-up-2fa', (req, res) => {
     return res.redirect('/')
   }
 
-  return res.render('signup-2fa.ejs', { qr: req.session.qr })
+  return res.render('signup-2fa.ejs', { qr: req.session.qr, address: req.session.address })
 })
 
 app.post('/sign-up-2fa', (req, res) => {
